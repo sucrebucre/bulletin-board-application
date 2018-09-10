@@ -17,48 +17,48 @@ const pool = new Pool({
    port: '5432',
  })
 
- // bodyparser (for POST requests)
- let urlencodedParser = bodyparser.urlencoded({ extended: true })
+// bodyparser (for POST requests)
+let urlencodedParser = bodyparser.urlencoded({ extended: true });
 
 // code to create a table within the database
 
- // CREATE TABLE messages (
- //   id              SERIAL PRIMARY KEY,
- //   title           TEXT NOT NULL,
- //   body            TEXT NOT NULL
- // );
+// CREATE TABLE messages (
+//   id              SERIAL PRIMARY KEY,
+//   title           TEXT NOT NULL,
+//   body            TEXT NOT NULL
+// );
 
 
- // get input through CLI
+// get input through CLI
 
- // pool.connect()
- //
- // pool.query('INSERT INTO messages (title, body) values($1, $2)', process.argv.splice(2), (err) => {
- //   console.log(err ? err.stack : 'terminal message added to the database')
- // pool.query('SELECT * FROM messages', (err, res) => {
- // 	 console.log(err ? err.stack : res.rows)
- // 	pool.end()
- // 	})
- // })
+// pool.connect()
+//
+// pool.query('INSERT INTO messages (title, body) values($1, $2)', process.argv.splice(2), (err) => {
+//   console.log(err ? err.stack : 'terminal message added to the database')
+// pool.query('SELECT * FROM messages', (err, res) => {
+// 	 console.log(err ? err.stack : res.rows)
+// 	pool.end()
+// 	})
+// })
 
 
- // check if connection with postgres database is established
+// check if connection with postgres database is established
 
- // pool.connect(function(err, client, done) {
- //   if(err) {
- //     return console.error('connexion error', err);
- //   }
- //   client.query('SELECT $1::int AS number', ['1'], function(err, result) {
- //     done();
- //
- //     if(err) {
- //       return console.error('error running query', err);
- //     }
- //
- //     console.log(result.rows[0].number);
- //
- //   });
- // });
+// pool.connect(function(err, client, done) {
+//   if(err) {
+//     return console.error('connexion error', err);
+//   }
+//   client.query('SELECT $1::int AS number', ['1'], function(err, result) {
+//     done();
+//
+//     if(err) {
+//       return console.error('error running query', err);
+//     }
+//
+//     console.log(result.rows[0].number);
+//
+//   });
+// });
 
 // get request referring to file in view folder
 app.get('/add-message', function (request, response) {
@@ -66,7 +66,7 @@ app.get('/add-message', function (request, response) {
 });
 
 // get input through POST form
-app.post('/messages', urlencodedParser, function (request, response) {
+app.post('/post-message', urlencodedParser, function (request, response) {
 
     let new_content = request.body;
 
@@ -76,36 +76,29 @@ app.post('/messages', urlencodedParser, function (request, response) {
     let body_input = new_content["body"];
 
     pool.query('INSERT INTO messages (title, body) VALUES ($1, $2)', [title_input, body_input], (err) => {
-      //console.log(err ? err.stack : 'New input added to the database')
-    pool.query('SELECT * FROM messages', (err, res) => {
-      //console.log(err ? err.stack : res.rows)
-    posts = res.rows;
-
-    response.render('posts');
-
-    // get request referring to file in view folder
-    app.get('/messages', function (request, response) {
-      response.render({posts});
-      //console.log(posts);
-    });
-
-
-    console.log(posts);
+      response.redirect('/messages');
+    })
 
     //pool.end()
-    })
-  })
-
-
-
-    //response.render('posts');
 
 });
 
-// issues to be fixed:
-// 1 the script can only run multiple times if "pool.end()" is turned off
-// 2 if localhost:3000/messages is visited directly, without populating it first, it does not load the results
 
+// get request referring to file in view folder
+app.get('/messages', function (request, response) {
+
+    pool.connect()
+
+    pool.query('SELECT * FROM messages', (err, res) => {
+
+    posts = res.rows;
+
+    response.render('posts', {posts});
+
+    //pool.end()
+
+    })
+});
 
 // set the port on localhost
 app.listen(3000, function(){
