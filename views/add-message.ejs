@@ -1,5 +1,9 @@
+<h1>Write a new post</h1>
+
 <form id="messages" action="/post-message" method="POST">
-  Title: <input type="text" name="title">
-  Message: <input type="text" name="body">
+  Title: <input type="text" name="title"><br>
+  <textarea rows="4" cols="50" name="body" type="text" placeholder="Message"></textarea><br>
   <input type="submit" value="Submit">
 </form>
+
+<a href="http://localhost:3000/messages">View all posts</a>
