@@ -1,3 +1,6 @@
+// load environment variables
+require('dotenv').config();
+
 // require npm packages
 const bodyparser = require('body-parser');
 const express = require('express');
@@ -9,13 +12,13 @@ const app = express();
 // set view enging to "ejs"
 app.set('view engine', 'ejs');
 
-// type in terminal: createdb -h localhost -p 5432 -U postgres bulletinboard
+// setting up the connection with the database using environment variables
 const pool = new Pool({
-   host: 'localhost',
-   user: 'postgres',
-   database: 'bulletinboard',
-   port: '5432',
- })
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
+})
 
 // bodyparser (for POST requests)
 let urlencodedParser = bodyparser.urlencoded({ extended: true });
